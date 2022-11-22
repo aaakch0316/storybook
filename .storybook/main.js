@@ -2,7 +2,9 @@ module.exports = {
   "stories": [
     // "../packages/components/**/*.stories.@(js|jsx|ts|tsx)",
     // "../packages/test-cra/src/**/*.stories.@(js|jsx|ts|tsx)",
-    "../stories/**/*.stories.mdx",
+    // "../stories/**/*.stories.mdx",
+    "../packages/default/stories/**/*.stories.@(js|jsx|ts|tsx)",
+    // "../packages/default/stories/**/*.stories.mdx",
     // "../stories/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   "addons": [
