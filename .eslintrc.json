@@ -1,0 +1,33 @@
+{
+    "env": {
+        "node": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "extends": [
+        "plugin:@typescript-eslint/recommended", 
+        "plugin:prettier/recommended", 
+        "prettier/@typescript-eslint"
+    ],
+    "plugins": [
+        "react",
+        "react-hooks",
+        "prettier",
+        "@emotion",
+        "jest",
+        "jest-dom"
+    ],
+    "rules": {
+        "prettier/prettier": "error",
+    },
+    "settings": { 
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx", ".js"] 
+        }, 
+        "import/resolver": { 
+          "typescript": "./tsconfig.json" 
+        }
+      }
+}

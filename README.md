@@ -1,15 +1,15 @@
-# 디자인시스템
-> TEST
-
+# storybook-hanpy
 ## Tech Requirement
 - yarn berry 
 - ESLint
 - Babel
-- cra/vite
+- react
+- emotion
+- typescript
 
-## Get Start Storybook 
-```
-$ yarn set version berry
-$ yarn
-$ yarn storybook
-```
+## file structure
+- components : packages/components/**
+- .storybook : storybook settings
+
+## design reference
+> [chakra-ui](https://chakra-ui.com/)

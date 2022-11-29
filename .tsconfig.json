@@ -15,11 +15,8 @@
     },
     "references": [
       { 
-        "path": "packages/components"
-      },
-      { 
-        "path": "packages/test-app/src"
+        "path": "packages/components/**"
       }
     ],
-    "exclude": ["packages/**/dist/**"],
+    "exclude": ["node_modules/**"]
 }
