@@ -1,6 +1,6 @@
-export const ColorBase = {
+export const Colors :{[index:string]: string}  = {
   white: '#fff',
-  dbBlack: '#282b31',
+  black: '#282b31',
   gray1: '#12102d',
   gray2: '#222548',
   gray3: '#2b2f5a',

@@ -11,6 +11,8 @@ const Template: ComponentStory<typeof Input> = (args) => <Input {...args} />;
 
 export const Base = Template.bind({});
 Base.args = {
-  label: 'Basic usag'
+  label: 'Basic usag',
+  size: 'md',
+  variant: 'outline'
 };
 
