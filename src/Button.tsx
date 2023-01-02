@@ -66,6 +66,3 @@ const style = ({
 )};
 
 export default Button;
-  // background: #20c997;
-  // background: ${color};
-  // background: black;
