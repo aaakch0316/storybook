@@ -21,6 +21,9 @@ const Flex = (props: FlexProps) => {
         style(props)
       }
     >
+      <div style={{width: '100px', height: '100px',border: '1px solid red'}}></div>
+      <div style={{width: '100px', height: '100px',border: '1px solid black'}}></div>
+      <div style={{width: '100px', height: '100px',border: '1px solid blue'}}></div>
     </div>
   )
 }
