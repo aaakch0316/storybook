@@ -12,6 +12,9 @@ const Template: ComponentStory<typeof Stack> = (args) => <Stack {...args} />;
 export const Base = Template.bind({});
 Base.args = {
   direction: 'row',
-  spacing: '24px'
+  spacing: '24px',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-start',
+  alignItems: 'stretch',
 };
 
