@@ -11,7 +11,7 @@ export default {
 const Template: ComponentStory<typeof Select> = (args) => {
   const [value, setValue] = useState(null);
 
-  const updateValue = (target) => {
+  const updateValue = (target: any) => {
     setValue(target);
   };
   return (
@@ -20,10 +20,11 @@ const Template: ComponentStory<typeof Select> = (args) => {
         onChange={updateValue}
         defaultValue={args.defaultValue}
         placeholder={args.placeholder}
+        values={args.values}
       >
-        <Select.Trigger>One Select</Select.Trigger>
+        <Select.Trigger />
         <Select.OptionList>
-          {args.values.map((optionItem) => (
+          {args.values.map((optionItem: String) => (
             <Select.Option value={optionItem}>{optionItem}</Select.Option>
           ))}
         </Select.OptionList>

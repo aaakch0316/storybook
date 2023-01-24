@@ -1,33 +1,46 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useEffect } from "@storybook/addons";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  MouseEvent,
+  ReactNode,
+  useContext,
+  useState,
+} from "react";
 
-interface SelectOption {
-  // children: ReactNode;
-  // value?: string | null;
-  label: string;
+type SelectStatusContext = {
+  open?: Boolean;
+  setOpen?: (data: Boolean) => void;
+  selected: String;
+  setSelected?: (data: String) => void;
+  selectPlaceholder?: String;
+  updateSelected: (data: String) => void;
+  handleButton: () => void;
+};
+
+interface SelectProps {
+  children: ReactNode;
+  onChange: (data: any) => void;
+  defaultValue: String;
+  placeholder: String;
+  values: String[];
 }
 
-interface ISelectContext {
-  open: Boolean;
-  setOpen: (data: Boolean) => void;
-}
-
-const SelectContext = createContext<ISelectContext | undefined>();
+const SelectContext = createContext<SelectStatusContext | null>(null);
 
 // typescript는 조금 더 공부 하고 추가하겠습니다.
-const Select: React.FC = ({
+const Select = ({
   children,
   onChange,
   defaultValue,
   placeholder,
-}) => {
-  const [open = false, setOpen] = useState(false);
-  const [selected, setSelected] = useState(defaultValue);
+}: SelectProps) => {
+  const [open = false, setOpen] = useState<Boolean>(false);
+  const [selected, setSelected] = useState<String>(defaultValue);
   const selectPlaceholder = placeholder || "Choose an option";
 
-  const updateSelected = (option) => {
+  const updateSelected = (option: String) => {
     onChange(option);
     setSelected(option);
     setTimeout(() => {
@@ -35,9 +48,9 @@ const Select: React.FC = ({
     }, 400);
   };
 
-  const handlingButton = () => {
+  const handleButton = () => {
     if (!open) {
-      setOpen((prev) => !prev);
+      setOpen((prev: Boolean) => !prev);
     } else {
       setTimeout(() => {
         setOpen(false);
@@ -54,7 +67,7 @@ const Select: React.FC = ({
         setSelected,
         selectPlaceholder,
         updateSelected,
-        handlingButton,
+        handleButton,
       }}
     >
       {children}
@@ -63,12 +76,13 @@ const Select: React.FC = ({
 };
 
 const Trigger = () => {
-  const { setOpen, selected, selectPlaceholder, handlingButton } =
-    useContext(SelectContext);
+  const { setOpen, selected, selectPlaceholder, handleButton } = useContext(
+    SelectContext
+  ) as SelectStatusContext;
 
   return (
     <button
-      onClick={() => handlingButton()}
+      onClick={() => handleButton()}
       type="button"
       id="select-box-1"
       aria-haspopup="true"
@@ -80,27 +94,43 @@ const Trigger = () => {
   );
 };
 
-const OptionList = ({ children }) => {
-  const { open } = useContext(SelectContext);
+interface OptionListProps {
+  children: ReactNode;
+}
+
+const OptionList = ({ children }: OptionListProps) => {
+  const { open } = useContext(SelectContext) as SelectStatusContext;
   return (
     <ul
       role="listbox"
       css={open ? styleOpenOptionList : styleUnopenOptionList}
       aria-labelledby="select-box-1"
       id="select-list"
-      role="listbox"
     >
       {open ? children : null}
     </ul>
   );
 };
+interface OptionProps {
+  children: ReactNode;
+  value?: String;
+  // children: ReactNode;
+  // value?: string | null;
+  // label: string;
+}
+type CustomMouseEvent = MouseEvent<HTMLElement>;
 
-const Option: React.FC<SelectOption> = ({ children, value }) => {
-  const { selected, updateSelected } = useContext(SelectContext);
+const Option = ({ children }: OptionProps) => {
+  const { selected, updateSelected } = useContext(
+    SelectContext
+  ) as SelectStatusContext;
 
-  return (
-    <li onClick={(e) => updateSelected(e.target.innerText)}>{children}</li>
-  );
+  const handleSelectInnerTest = (e: CustomMouseEvent) => {
+    const eventTarget = e.target as HTMLElement;
+    updateSelected(eventTarget.innerText);
+  };
+
+  return <li onClick={handleSelectInnerTest}>{children}</li>;
 };
 Select.Trigger = Trigger;
 Select.Option = Option;
