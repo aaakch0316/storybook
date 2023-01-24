@@ -12,6 +12,8 @@ import {
 type SelectStatusContext = {
   open?: Boolean;
   setOpen?: (data: Boolean) => void;
+  optionUI?: Boolean;
+  setOptionUI: (data: Boolean) => void;
   selected: String;
   setSelected?: (data: String) => void;
   selectPlaceholder?: String;
@@ -38,23 +40,22 @@ const Select = ({
 }: SelectProps) => {
   const [open = false, setOpen] = useState<Boolean>(false);
   const [selected, setSelected] = useState<String>(defaultValue);
+  const [optionUI, setOptionUI] = useState<Boolean>(true);
   const selectPlaceholder = placeholder || "Choose an option";
 
   const updateSelected = (option: String) => {
     onChange(option);
     setSelected(option);
-    setTimeout(() => {
-      setOpen(false);
-    }, 400);
+    setOpen(false);
   };
 
   const handleButton = () => {
-    if (!open) {
-      setOpen((prev: Boolean) => !prev);
+    setOpen((prev: Boolean) => !prev);
+    if (open === true) {
+      setOpen(false);
     } else {
-      setTimeout(() => {
-        setOpen(false);
-      }, 400);
+      setOpen(true);
+      setOptionUI(true);
     }
   };
 
@@ -63,6 +64,8 @@ const Select = ({
       value={{
         open,
         setOpen,
+        optionUI,
+        setOptionUI,
         selected,
         setSelected,
         selectPlaceholder,
@@ -99,15 +102,26 @@ interface OptionListProps {
 }
 
 const OptionList = ({ children }: OptionListProps) => {
-  const { open } = useContext(SelectContext) as SelectStatusContext;
+  const { open, setOpen, optionUI, setOptionUI } = useContext(
+    SelectContext
+  ) as SelectStatusContext;
+  const handleAnimation = () => {
+    if (open === false) {
+      setOptionUI(false);
+    }
+  };
+
   return (
     <ul
       role="listbox"
       css={open ? styleOpenOptionList : styleUnopenOptionList}
+      onAnimationEnd={handleAnimation}
       aria-labelledby="select-box-1"
       id="select-list"
     >
-      {open ? children : null}
+      {JSON.stringify(open)}
+      {optionUI ? children : null}
+      {/* {children} */}
     </ul>
   );
 };
@@ -147,8 +161,9 @@ const styleUnopenOptionList = ({}) => {
         transform: translateY(-100%);
       }
     }
-    animation: styleUnopenOptionList 0.4s ease;
     overflow: hidden;
+    animation: styleUnopenOptionList 0.4s ease;
+    /* dsf */
   `;
 };
 
