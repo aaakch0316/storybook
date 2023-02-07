@@ -15,7 +15,14 @@ const Template: ComponentStory<typeof Select> = (args) => {
     setValue(target);
   };
   return (
-    <>
+    <div
+      style={{
+        background: "#f2f4f6",
+        width: "100%",
+        height: "90vh",
+        padding: "20px",
+      }}
+    >
       <Select
         onChange={updateValue}
         defaultValue={args.defaultValue}
@@ -28,15 +35,15 @@ const Template: ComponentStory<typeof Select> = (args) => {
             <Select.Option value={optionItem}>{optionItem}</Select.Option>
           ))}
         </Select.OptionList>
-        <div>{value}</div>
       </Select>
-    </>
+      {/* <div>{value}</div> */}
+    </div>
   );
 };
 
 export const Base = Template.bind({});
 Base.args = {
-  values: ["리액트", "넥스트", "앵귤러"],
-  placeholder: "선택하세요~!",
+  values: ["1억원 미만", "1~5억원", "5억원 초과"],
+  placeholder: "선택하세요",
   defaultValue: "",
 };

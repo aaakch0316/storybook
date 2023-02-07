@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useEffect } from "@storybook/addons";
 import {
   createContext,
   MouseEvent,
@@ -12,8 +11,6 @@ import {
 type SelectStatusContext = {
   open?: Boolean;
   setOpen?: (data: Boolean) => void;
-  optionUI?: Boolean;
-  setOptionUI: (data: Boolean) => void;
   selected: String;
   setSelected?: (data: String) => void;
   selectPlaceholder?: String;
@@ -40,7 +37,6 @@ const Select = ({
 }: SelectProps) => {
   const [open = false, setOpen] = useState<Boolean>(false);
   const [selected, setSelected] = useState<String>(defaultValue);
-  const [optionUI, setOptionUI] = useState<Boolean>(true);
   const selectPlaceholder = placeholder || "Choose an option";
 
   const updateSelected = (option: String) => {
@@ -55,7 +51,6 @@ const Select = ({
       setOpen(false);
     } else {
       setOpen(true);
-      setOptionUI(true);
     }
   };
 
@@ -64,8 +59,6 @@ const Select = ({
       value={{
         open,
         setOpen,
-        optionUI,
-        setOptionUI,
         selected,
         setSelected,
         selectPlaceholder,
@@ -73,27 +66,35 @@ const Select = ({
         handleButton,
       }}
     >
-      {children}
+      <div css={styleSelect}>{children}</div>
     </SelectContext.Provider>
   );
 };
 
 const Trigger = () => {
-  const { setOpen, selected, selectPlaceholder, handleButton } = useContext(
+  const { selected, selectPlaceholder, handleButton } = useContext(
     SelectContext
   ) as SelectStatusContext;
 
   return (
-    <button
-      onClick={() => handleButton()}
-      type="button"
-      id="select-box-1"
-      aria-haspopup="true"
-      aria-expanded="true"
-      aria-controls="select-list"
-    >
-      {selected.length > 0 ? selected : selectPlaceholder}
-    </button>
+    <>
+      <label htmlFor="select-box-1" css={styleTriggerLabel}>
+        Monthly payment (transaction) limit
+      </label>
+      <button
+        onClick={() => handleButton()}
+        type="button"
+        tabIndex={0}
+        id="select-box-1"
+        css={styleTrigger}
+        // aria-haspopup="true"
+        // aria-expanded="true"
+        // aria-controls="select-list"
+      >
+        <div>{selected.length > 0 ? selected : selectPlaceholder}</div>
+        <div>&#8744;</div>
+      </button>
+    </>
   );
 };
 
@@ -102,26 +103,17 @@ interface OptionListProps {
 }
 
 const OptionList = ({ children }: OptionListProps) => {
-  const { open, setOpen, optionUI, setOptionUI } = useContext(
-    SelectContext
-  ) as SelectStatusContext;
-  const handleAnimation = () => {
-    if (open === false) {
-      setOptionUI(false);
-    }
-  };
+  const { open } = useContext(SelectContext) as SelectStatusContext;
 
   return (
     <ul
       role="listbox"
-      css={open ? styleOpenOptionList : styleUnopenOptionList}
-      onAnimationEnd={handleAnimation}
-      aria-labelledby="select-box-1"
+      css={styleOptionListContainer}
+      // css={open ? styleOpenOptionList : styleUnopenOptionList}
+      // aria-labelledby="select-box-1"
       id="select-list"
     >
-      {JSON.stringify(open)}
-      {optionUI ? children : null}
-      {/* {children} */}
+      {open ? children : null}
     </ul>
   );
 };
@@ -135,24 +127,104 @@ interface OptionProps {
 type CustomMouseEvent = MouseEvent<HTMLElement>;
 
 const Option = ({ children }: OptionProps) => {
-  const { selected, updateSelected } = useContext(
-    SelectContext
-  ) as SelectStatusContext;
+  const { updateSelected } = useContext(SelectContext) as SelectStatusContext;
 
   const handleSelectInnerTest = (e: CustomMouseEvent) => {
     const eventTarget = e.target as HTMLElement;
     updateSelected(eventTarget.innerText);
   };
 
-  return <li onClick={handleSelectInnerTest}>{children}</li>;
+  return (
+    <li css={styleOption} onClick={handleSelectInnerTest} tabIndex={0}>
+      {children}
+    </li>
+  );
 };
+Select.OptionList = OptionList;
 Select.Trigger = Trigger;
 Select.Option = Option;
-Select.OptionList = OptionList;
+
+const styleSelect = () => {
+  return css`
+    position: relative;
+    padding: 0px;
+  `;
+};
+
+const styleOptionListContainer = () => {
+  return css`
+    position: absolute;
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #d1d6db
+
+    width: 300px;
+    top: 80px;
+    left: 10px;
+    background: #fff;
+    color: #0062cc;
+    text-align: left;
+    border-radius: 0.25rem;
+  `;
+};
+
+const styleTriggerLabel = () => {
+  return css`
+    margin: 10px;
+  `;
+};
+
+const styleTrigger = () => {
+  return css`
+    position: relative;
+    background: white;
+    color: #8b95a1;
+    border: 1px solid #d1d6db;
+    /* border: 1px solid transparent; */
+
+    width: 350px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 10px;
+
+    border-radius: 0.25rem;
+    font-weight: 400;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    cursor: pointer;
+
+    :hover {
+      border-color: #0069d9;
+    }
+    :focus{
+      border-color: #0069d9;
+  `;
+};
+
+const styleOption = () => {
+  return css`
+    list-style: none;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* font-size: 1.6rem; */
+    /* padding: 1rem; */
+    /* z-index: 1; */
+    /* margin-top: 0.2rem; */
+  `;
+};
 
 const styleUnopenOptionList = ({}) => {
   return css`
-    @keyframes styleUnopenOptionList {
+    /* @keyframes styleUnopenOptionList {
       0% {
         transform: translateY(0);
       }
@@ -162,14 +234,14 @@ const styleUnopenOptionList = ({}) => {
       }
     }
     overflow: hidden;
-    animation: styleUnopenOptionList 0.4s ease;
+    animation: styleUnopenOptionList 0.4s ease; */
     /* dsf */
   `;
 };
 
 const styleOpenOptionList = ({}) => {
   return css`
-    @keyframes styleOpenOptionList {
+    /* @keyframes styleOpenOptionList {
       0% {
         transform: translateY(-100%);
       }
@@ -179,7 +251,7 @@ const styleOpenOptionList = ({}) => {
       }
     }
     overflow: hidden;
-    animation: styleOpenOptionList 0.4s ease;
+    animation: styleOpenOptionList 0.4s ease; */
   `;
 };
 
