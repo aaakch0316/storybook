@@ -18,9 +18,10 @@ const Template: ComponentStory<typeof Select> = (args) => {
     <div
       style={{
         background: "#f2f4f6",
-        width: "100%",
-        height: "90vh",
+        width: "90%",
+        height: "70vh",
         padding: "20px",
+        fontFamily: "sans-serif",
       }}
     >
       <Select
@@ -31,8 +32,11 @@ const Template: ComponentStory<typeof Select> = (args) => {
       >
         <Select.Trigger />
         <Select.OptionList>
-          {args.values.map((optionItem: String) => (
-            <Select.Option value={optionItem}>{optionItem}</Select.Option>
+          {args.values.map((optionItem: String, index: number) => (
+            <Select.Option order={index} value={optionItem}>
+              {optionItem}
+              {/* {index} */}
+            </Select.Option>
           ))}
         </Select.OptionList>
       </Select>

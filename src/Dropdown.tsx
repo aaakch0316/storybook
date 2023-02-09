@@ -1,10 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import {
+import React, {
   createContext,
   MouseEvent,
   ReactNode,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -16,6 +18,12 @@ type SelectStatusContext = {
   selectPlaceholder?: String;
   updateSelected: (data: String) => void;
   handleButton: () => void;
+  closeSelectBox: () => void;
+  handleKeyDown: (
+    order: number,
+    event: React.KeyboardEvent<HTMLLIElement>
+  ) => void;
+  optionRef: React.MutableRefObject<HTMLLIElement[]>;
 };
 
 interface SelectProps {
@@ -28,7 +36,6 @@ interface SelectProps {
 
 const SelectContext = createContext<SelectStatusContext | null>(null);
 
-// typescript는 조금 더 공부 하고 추가하겠습니다.
 const Select = ({
   children,
   onChange,
@@ -37,7 +44,14 @@ const Select = ({
 }: SelectProps) => {
   const [open = false, setOpen] = useState<Boolean>(false);
   const [selected, setSelected] = useState<String>(defaultValue);
+  const optionRef = useRef<HTMLLIElement[]>([]);
   const selectPlaceholder = placeholder || "Choose an option";
+
+  useEffect(() => {
+    if (open === true) {
+      optionRef.current[0].focus();
+    }
+  }, [open]);
 
   const updateSelected = (option: String) => {
     onChange(option);
@@ -45,12 +59,41 @@ const Select = ({
     setOpen(false);
   };
 
+  const closeSelectBox = () => {
+    setOpen(false);
+  };
+
   const handleButton = () => {
     setOpen((prev: Boolean) => !prev);
-    if (open === true) {
-      setOpen(false);
-    } else {
-      setOpen(true);
+  };
+
+  const handleKeyDown = (
+    order: number,
+    event: React.KeyboardEvent<HTMLLIElement>
+  ) => {
+    switch (event.keyCode) {
+      case 38:
+        if (order > 0) {
+          optionRef.current[order - 1].focus();
+        }
+        break;
+      case 39:
+        if (order < optionRef.current.length - 1) {
+          optionRef.current[order + 1].focus();
+        }
+        break;
+      case 40:
+        if (order < optionRef.current.length - 1) {
+          optionRef.current[order + 1].focus();
+        }
+        break;
+      case 37:
+        if (order > 0) {
+          optionRef.current[order - 1].focus();
+        }
+        break;
+      case 9:
+        break;
     }
   };
 
@@ -64,6 +107,9 @@ const Select = ({
         selectPlaceholder,
         updateSelected,
         handleButton,
+        handleKeyDown,
+        closeSelectBox,
+        optionRef,
       }}
     >
       <div css={styleSelect}>{children}</div>
@@ -72,9 +118,24 @@ const Select = ({
 };
 
 const Trigger = () => {
-  const { selected, selectPlaceholder, handleButton } = useContext(
-    SelectContext
-  ) as SelectStatusContext;
+  const { open, selected, selectPlaceholder, handleButton, closeSelectBox } =
+    useContext(SelectContext) as SelectStatusContext;
+  const optionListRef = useRef<HTMLButtonElement>(null);
+
+  const handleClickOutside = (event: any) => {
+    const eventTarget = event.target as HTMLElement;
+
+    if (optionListRef.current !== eventTarget) {
+      closeSelectBox();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -82,14 +143,13 @@ const Trigger = () => {
         Monthly payment (transaction) limit
       </label>
       <button
+        ref={optionListRef}
         onClick={() => handleButton()}
         type="button"
         tabIndex={0}
         id="select-box-1"
-        css={styleTrigger}
-        // aria-haspopup="true"
-        // aria-expanded="true"
-        // aria-controls="select-list"
+        css={selected.length > 0 ? styleSelectedTrigger : styleTrigger}
+        aria-expanded={open ? true : false}
       >
         <div>{selected.length > 0 ? selected : selectPlaceholder}</div>
         <div>&#8744;</div>
@@ -103,7 +163,7 @@ interface OptionListProps {
 }
 
 const OptionList = ({ children }: OptionListProps) => {
-  const { open } = useContext(SelectContext) as SelectStatusContext;
+  const { open, optionRef } = useContext(SelectContext) as SelectStatusContext;
 
   return (
     <ul
@@ -119,6 +179,7 @@ const OptionList = ({ children }: OptionListProps) => {
 };
 interface OptionProps {
   children: ReactNode;
+  order: number;
   value?: String;
   // children: ReactNode;
   // value?: string | null;
@@ -126,8 +187,10 @@ interface OptionProps {
 }
 type CustomMouseEvent = MouseEvent<HTMLElement>;
 
-const Option = ({ children }: OptionProps) => {
-  const { updateSelected } = useContext(SelectContext) as SelectStatusContext;
+const Option = ({ children, order }: OptionProps) => {
+  const { updateSelected, optionRef, handleKeyDown } = useContext(
+    SelectContext
+  ) as SelectStatusContext;
 
   const handleSelectInnerTest = (e: CustomMouseEvent) => {
     const eventTarget = e.target as HTMLElement;
@@ -135,7 +198,14 @@ const Option = ({ children }: OptionProps) => {
   };
 
   return (
-    <li css={styleOption} onClick={handleSelectInnerTest} tabIndex={0}>
+    <li
+      key={`${order}-option`}
+      css={styleOption}
+      ref={(el: HTMLLIElement) => (optionRef.current[order] = el)}
+      onClick={handleSelectInnerTest}
+      onKeyDown={(event) => handleKeyDown(order, event)}
+      tabIndex={0}
+    >
       {children}
     </li>
   );
@@ -164,7 +234,9 @@ const styleOptionListContainer = () => {
     background: #fff;
     color: #0062cc;
     text-align: left;
-    border-radius: 0.25rem;
+    border-radius: 8px;
+    /* box-shadow: 0 8px 16px 0 rgba(2,32,71,0.05); */
+    box-shadow: 0 4px 8px 0 rgba(0,27,55,0.1);
   `;
 };
 
@@ -174,11 +246,11 @@ const styleTriggerLabel = () => {
   `;
 };
 
-const styleTrigger = () => {
+const styleSelectedTrigger = () => {
   return css`
     position: relative;
     background: white;
-    color: #8b95a1;
+    color: black;
     border: 1px solid #d1d6db;
     /* border: 1px solid transparent; */
 
@@ -204,54 +276,54 @@ const styleTrigger = () => {
     :hover {
       border-color: #0069d9;
     }
-    :focus{
+  `;
+};
+
+const styleTrigger = () => {
+  return css`
+    position: relative;
+    background: white;
+    color: #8b95a1;
+    border: 1px solid #d1d6db;
+    /* border: 1px solid transparent; */
+
+    width: 350px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 10px;
+
+    border-radius: 0.25rem;
+    font-weight: 400;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    cursor: pointer;
+
+    :hover {
       border-color: #0069d9;
+    }
   `;
 };
 
 const styleOption = () => {
   return css`
     list-style: none;
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* font-size: 1.6rem; */
-    /* padding: 1rem; */
-    /* z-index: 1; */
-    /* margin-top: 0.2rem; */
-  `;
-};
+    font-size: 14px;
+    padding: 10px 15px;
+    margin: 7px;
+    color: black;
+    outline: none;
+    border-radius: 3px;
 
-const styleUnopenOptionList = ({}) => {
-  return css`
-    /* @keyframes styleUnopenOptionList {
-      0% {
-        transform: translateY(0);
-      }
-
-      100% {
-        transform: translateY(-100%);
-      }
+    :focus {
+      background-color: rgb(242, 244, 246);
+      color: #0069d9;
     }
-    overflow: hidden;
-    animation: styleUnopenOptionList 0.4s ease; */
-    /* dsf */
-  `;
-};
-
-const styleOpenOptionList = ({}) => {
-  return css`
-    /* @keyframes styleOpenOptionList {
-      0% {
-        transform: translateY(-100%);
-      }
-
-      100% {
-        transform: translateY(0);
-      }
+    :hover {
+      background-color: rgb(242, 244, 246);
+      color: #0069d9;
     }
-    overflow: hidden;
-    animation: styleOpenOptionList 0.4s ease; */
   `;
 };
 
