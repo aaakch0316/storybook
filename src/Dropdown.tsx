@@ -19,12 +19,14 @@ type SelectStatusContext = {
   updateSelected: (data: String) => void;
   handleButton: () => void;
   closeSelectBox: () => void;
+  handleSelectInnerTest: (event: CustomMouseEvent) => void;
   handleKeyDown: (
     order: number,
     event: React.KeyboardEvent<HTMLLIElement>
   ) => void;
   optionRef: React.MutableRefObject<HTMLLIElement[]>;
 };
+type CustomMouseEvent = MouseEvent<HTMLElement>;
 
 interface SelectProps {
   children: ReactNode;
@@ -48,8 +50,14 @@ const Select = ({
   const selectPlaceholder = placeholder || "Choose an option";
 
   useEffect(() => {
-    if (open === true) {
-      optionRef.current[0].focus();
+    if (optionRef.current.length > 0) {
+      for (let i = 0; i < optionRef.current.length; i++) {
+        if (optionRef.current[i]?.innerText === selected) {
+          if (open === true) {
+            optionRef.current[i].focus();
+          }
+        }
+      }
     }
   }, [open]);
 
@@ -57,6 +65,11 @@ const Select = ({
     onChange(option);
     setSelected(option);
     setOpen(false);
+  };
+
+  const handleSelectInnerTest = (event: CustomMouseEvent) => {
+    const eventTarget = event.target as HTMLElement;
+    updateSelected(eventTarget.innerText);
   };
 
   const closeSelectBox = () => {
@@ -92,6 +105,10 @@ const Select = ({
           optionRef.current[order - 1].focus();
         }
         break;
+      case 13:
+        const eventTarget = event.target as HTMLElement;
+        updateSelected(eventTarget.innerText);
+        break;
       case 9:
         break;
     }
@@ -106,6 +123,7 @@ const Select = ({
         setSelected,
         selectPlaceholder,
         updateSelected,
+        handleSelectInnerTest,
         handleButton,
         handleKeyDown,
         closeSelectBox,
@@ -163,16 +181,10 @@ interface OptionListProps {
 }
 
 const OptionList = ({ children }: OptionListProps) => {
-  const { open, optionRef } = useContext(SelectContext) as SelectStatusContext;
+  const { open } = useContext(SelectContext) as SelectStatusContext;
 
   return (
-    <ul
-      role="listbox"
-      css={styleOptionListContainer}
-      // css={open ? styleOpenOptionList : styleUnopenOptionList}
-      // aria-labelledby="select-box-1"
-      id="select-list"
-    >
+    <ul role="listbox" css={styleOptionListContainer} id="select-list">
       {open ? children : null}
     </ul>
   );
@@ -181,21 +193,12 @@ interface OptionProps {
   children: ReactNode;
   order: number;
   value?: String;
-  // children: ReactNode;
-  // value?: string | null;
-  // label: string;
 }
-type CustomMouseEvent = MouseEvent<HTMLElement>;
 
 const Option = ({ children, order }: OptionProps) => {
-  const { updateSelected, optionRef, handleKeyDown } = useContext(
+  const { optionRef, handleKeyDown, handleSelectInnerTest } = useContext(
     SelectContext
   ) as SelectStatusContext;
-
-  const handleSelectInnerTest = (e: CustomMouseEvent) => {
-    const eventTarget = e.target as HTMLElement;
-    updateSelected(eventTarget.innerText);
-  };
 
   return (
     <li
