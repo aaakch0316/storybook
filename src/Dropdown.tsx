@@ -24,7 +24,7 @@ type SelectStatusContext = {
     order: number,
     event: React.KeyboardEvent<HTMLLIElement>
   ) => void;
-  optionRef: React.MutableRefObject<HTMLLIElement[]>;
+  optionRef: React.MutableRefObject<HTMLElement[]>;
 };
 type CustomMouseEvent = MouseEvent<HTMLElement>;
 
@@ -46,7 +46,7 @@ const Select = ({
 }: SelectProps) => {
   const [open = false, setOpen] = useState<Boolean>(false);
   const [selected, setSelected] = useState<String>(defaultValue);
-  const optionRef = useRef<HTMLLIElement[]>([]);
+  const optionRef = useRef<HTMLElement[]>([]);
   const selectPlaceholder = placeholder || "Choose an option";
 
   useEffect(() => {
