@@ -84,32 +84,32 @@ const Select = ({
     order: number,
     event: React.KeyboardEvent<HTMLLIElement>
   ) => {
-    switch (event.keyCode) {
-      case 38:
+    switch (event.key) {
+      case 'ArrowUp':
         if (order > 0) {
           optionRef.current[order - 1].focus();
         }
         break;
-      case 39:
+      case 'ArrowRight':
         if (order < optionRef.current.length - 1) {
           optionRef.current[order + 1].focus();
         }
         break;
-      case 40:
+      case 'ArrowDown':
         if (order < optionRef.current.length - 1) {
           optionRef.current[order + 1].focus();
         }
         break;
-      case 37:
+      case 'ArrowLeft':
         if (order > 0) {
           optionRef.current[order - 1].focus();
         }
         break;
-      case 13:
+      case 'Enter':
         const eventTarget = event.target as HTMLElement;
         updateSelected(eventTarget.innerText);
         break;
-      case 9:
+      case 'Tab':
         break;
     }
   };
