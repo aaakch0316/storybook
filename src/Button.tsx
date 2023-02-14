@@ -1,13 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
+import { ReactNode } from 'react';
 import { handlingButtonDetail } from './styles/components/button'
 import { Colors } from './styles/components/commons/colors'
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * Button contents
    */
-  label: string;
+  variant?: 'solid' | 'outline' | 'dropdown';
+  /**
+   * Button contents
+   */
+  label?: string;
   /**
    * Button contents
    */
@@ -15,30 +20,76 @@ interface ButtonProps {
   /**
    * Button colors
    */
-  color: any;
+  color?: "blue2";
   /**
    * Button fontColor
    */
-  fontSize: string;
+  fontSize?: string;
+  children: ReactNode;
+  /**
+   * Optional click handler
+   */
+  onClick?: () => void;
 }
 
-const Button = (props: ButtonProps) => {
+const Button : React.FunctionComponent<ButtonProps> = (props) => {
+  // let style = null;
+  let ButtonComponent = null
+  switch (props.variant) {
+    case 'solid':
+      ButtonComponent = (
+        <button 
+          onClick = {props.onClick}
+          css={
+            styleSolid(props)
+          }
+        >
+          {props.children}
+        </button>
+      )
+      break;
+    case 'outline':
+      ButtonComponent = (
+        <button 
+        onClick = {props.onClick}
+        css={
+          styleOutline(props)
+        }
+      >
+        {props.children}
+      </button>
+      )
+      break;
+    case 'dropdown':
+      ButtonComponent = (
+        <button 
+          {...props}
+          onClick = {props.onClick}
+          css={
+            styleDropdown(props)
+          }
+        >
+          {props.children}
+          <div>&#8744;</div>
+        </button>
+      )
+      break;
+    default:
+      break;
+  }
   return (
-    <button 
-      css={
-        style(props)
-      }
-    >
-      {props.label}
-    </button>
+    <div>
+    {ButtonComponent}
+    </div>
   )
 }
 
-const style = ({
+const styleSolid = ({
   size = 'md',
   color = 'blue2'
 }: ButtonProps) => {
   const height : string = handlingButtonDetail.height[size]
+  const fontSise : string = handlingButtonDetail.fontSise[size]
   const background  = Colors[color]
   return (
     css`
@@ -47,7 +98,7 @@ const style = ({
       box-sizing: border-box;
       height: ${height};
       background: ${background};
-      font-size: 0.875rem;
+      font-size: ${fontSise};
       padding: 0.5rem 1rem;
       color: white;
       border-radius: 0.25rem;
@@ -57,12 +108,73 @@ const style = ({
         box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
       }
       &:hover {
-        background: #38d9a9;
+        background: ${Colors['blue1']};
+        transition-duration: 0.2s;
       }
       &:active {
-        background: #12b886;
+        background: ${Colors['blue1']};
       }
     `
 )};
+
+const styleOutline = ({
+  size = 'md',
+  color = 'blue2'
+}: ButtonProps) => {
+  const height : string = handlingButtonDetail.height[size]
+  const fontSise : string = handlingButtonDetail.fontSise[size]
+  const background  = Colors[color]
+  return (
+    css`
+    border: 1px solid ${background};
+    box-sizing: border-box;
+    height: ${height};
+    background: white;
+    font-size: ${fontSise};
+    padding: 0.5rem 1rem;
+    color: ${background};
+    border-radius: 0.25rem;
+    line-height: 1;
+    font-weight: 600;
+    &:focus {
+      box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+    }
+    &:hover {
+      background: ${Colors['blue7']};
+      transition-duration: 0.2s;
+    }
+    &:active {
+      background: ${Colors['blue6']};
+    }
+    `
+  )
+}
+
+const styleDropdown = ({}) => {
+  return (
+    css`
+      position: relative;
+      background: white;
+      color: #8b95a1;
+      border: 1px solid #d1d6db;
+      width: 350px;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      margin: 10px;
+  
+      border-radius: 0.25rem;
+      font-weight: 400;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      cursor: pointer;
+  
+      :hover {
+        border-color: #0069d9;
+      }
+    `
+  )
+}
 
 export default Button;
