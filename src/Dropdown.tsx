@@ -11,8 +11,8 @@ import React, {
 } from "react";
 
 type SelectStatusContext = {
-  open?: Boolean;
-  setOpen?: (data: Boolean) => void;
+  open?: boolean;
+  setOpen?: (data: boolean) => void;
   selected: String;
   setSelected?: (data: String) => void;
   selectPlaceholder?: String;
@@ -43,7 +43,7 @@ const Select = ({
   defaultValue,
   placeholder,
 }: SelectProps) => {
-  const [open = false, setOpen] = useState<Boolean>(false);
+  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<String>(defaultValue);
   const optionRef = useRef<HTMLElement[]>([]);
   const selectPlaceholder = placeholder || "Choose an option";
@@ -71,7 +71,7 @@ const Select = ({
   };
 
   const handleButton = () => {
-    setOpen((prev: Boolean) => !prev);
+    setOpen((prev: boolean) => !prev);
   };
 
   const handleKeyDown = (
@@ -201,7 +201,6 @@ const Option = ({ children, order }: OptionProps) => {
 
   return (
     <li
-      key={`${order}-option`}
       css={styleOption}
       ref={(el: HTMLLIElement) => (optionRef.current[order] = el)}
       onClick={handleClickOption}
