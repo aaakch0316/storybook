@@ -16,10 +16,9 @@ type SelectStatusContext = {
   selected: String;
   setSelected?: (data: String) => void;
   selectPlaceholder?: String;
-  updateSelected: (data: String) => void;
+  updateSelected: (data: string) => void;
   handleButton: () => void;
   closeSelectBox: () => void;
-  handleSelectInnerTest: (event: CustomMouseEvent) => void;
   handleKeyDown: (
     order: number,
     event: React.KeyboardEvent<HTMLLIElement>
@@ -61,15 +60,10 @@ const Select = ({
     }
   }, [open]);
 
-  const updateSelected = (option: String) => {
+  const updateSelected = (option: string) => {
     onChange(option);
     setSelected(option);
     setOpen(false);
-  };
-
-  const handleSelectInnerTest = (event: CustomMouseEvent) => {
-    const eventTarget = event.target as HTMLElement;
-    updateSelected(eventTarget.innerText);
   };
 
   const closeSelectBox = () => {
@@ -123,7 +117,6 @@ const Select = ({
         setSelected,
         selectPlaceholder,
         updateSelected,
-        handleSelectInnerTest,
         handleButton,
         handleKeyDown,
         closeSelectBox,
@@ -196,16 +189,22 @@ interface OptionProps {
 }
 
 const Option = ({ children, order }: OptionProps) => {
-  const { optionRef, handleKeyDown, handleSelectInnerTest } = useContext(
+  const { optionRef, handleKeyDown, updateSelected } = useContext(
     SelectContext
   ) as SelectStatusContext;
+
+  const handleClickOption = () => {
+    let unitValue = null
+    unitValue = children as string;
+    updateSelected(unitValue)
+  }
 
   return (
     <li
       key={`${order}-option`}
       css={styleOption}
       ref={(el: HTMLLIElement) => (optionRef.current[order] = el)}
-      onClick={handleSelectInnerTest}
+      onClick={handleClickOption}
       onKeyDown={(event) => handleKeyDown(order, event)}
       tabIndex={0}
     >
