@@ -194,9 +194,9 @@ const Option = ({ children, order }: OptionProps) => {
   ) as SelectStatusContext;
 
   const handleClickOption = () => {
-    let unitValue = null
-    unitValue = children as string;
-    updateSelected(unitValue)
+    let optionValue = null
+    optionValue = children as string;
+    updateSelected(optionValue)
   }
 
   return (
