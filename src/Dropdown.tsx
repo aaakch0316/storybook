@@ -29,7 +29,7 @@ type CustomMouseEvent = MouseEvent<HTMLElement>;
 
 interface SelectProps {
   children: ReactNode;
-  onChange: (data: any) => void;
+  onChange: (data: string) => void;
   defaultValue: String;
   placeholder: String;
   values: String[];
@@ -133,7 +133,7 @@ const Trigger = () => {
     useContext(SelectContext) as SelectStatusContext;
   const optionListRef = useRef<HTMLButtonElement>(null);
 
-  const handleClickOutside = (event: any) => {
+  const handleClickOutside = (event: MouseEvent) => {
     const eventTarget = event.target as HTMLElement;
 
     if (optionListRef.current !== eventTarget) {
@@ -142,9 +142,9 @@ const Trigger = () => {
   };
 
   useEffect(() => {
-    window.addEventListener("click", handleClickOutside);
+    window.addEventListener("click", () => handleClickOutside);
     return () => {
-      window.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("click", () =>handleClickOutside);
     };
   }, []);
 
