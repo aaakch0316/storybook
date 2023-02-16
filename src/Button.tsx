@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { handlingButtonDetail } from './styles/components/button'
 import { Colors } from './styles/components/commons/colors'
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps  {
   /**
    * Button contents
    */
@@ -25,20 +25,21 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
    * Button fontColor
    */
   fontSize?: string;
-  children: ReactNode;
+  children?: string;
   /**
    * Optional click handler
    */
   onClick?: () => void;
 }
 
-const Button : React.FunctionComponent<ButtonProps> = (props) => {
-  // let style = null;
+const Button = forwardRef<React.FunctionComponent<ButtonProps>, ButtonProps>((props, ref) => {
   let ButtonComponent = null
+
   switch (props.variant) {
     case 'solid':
       ButtonComponent = (
         <button 
+          // ref={ref}
           onClick = {props.onClick}
           css={
             styleSolid(props)
@@ -82,7 +83,7 @@ const Button : React.FunctionComponent<ButtonProps> = (props) => {
     {ButtonComponent}
     </div>
   )
-}
+})
 
 const styleSolid = ({
   size = 'md',
