@@ -9,9 +9,9 @@ export default {
 } as ComponentMeta<typeof Select>;
 
 const Template: ComponentStory<typeof Select> = (args) => {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState<string>('');
 
-  const updateValue = (target: any) => {
+  const updateValue = (target: string) => {
     setValue(target);
   };
   return (
@@ -33,14 +33,12 @@ const Template: ComponentStory<typeof Select> = (args) => {
         <Select.Trigger />
         <Select.OptionList>
           {args.values.map((optionItem: String, index: number) => (
-            <Select.Option order={index} value={optionItem}>
+            <Select.Option order={index} key={`${index}-option`} value={optionItem}>
               {optionItem}
-              {/* {index} */}
             </Select.Option>
           ))}
         </Select.OptionList>
       </Select>
-      {/* <div>{value}</div> */}
     </div>
   );
 };

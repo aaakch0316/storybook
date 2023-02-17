@@ -11,15 +11,14 @@ import React, {
 } from "react";
 
 type SelectStatusContext = {
-  open?: Boolean;
-  setOpen?: (data: Boolean) => void;
+  open?: boolean;
+  setOpen?: (data: boolean) => void;
   selected: String;
   setSelected?: (data: String) => void;
   selectPlaceholder?: String;
-  updateSelected: (data: String) => void;
+  updateSelected: (data: string) => void;
   handleButton: () => void;
   closeSelectBox: () => void;
-  handleSelectInnerTest: (event: CustomMouseEvent) => void;
   handleKeyDown: (
     order: number,
     event: React.KeyboardEvent<HTMLLIElement>
@@ -30,7 +29,7 @@ type CustomMouseEvent = MouseEvent<HTMLElement>;
 
 interface SelectProps {
   children: ReactNode;
-  onChange: (data: any) => void;
+  onChange: (data: string) => void;
   defaultValue: String;
   placeholder: String;
   values: String[];
@@ -44,7 +43,7 @@ const Select = ({
   defaultValue,
   placeholder,
 }: SelectProps) => {
-  const [open = false, setOpen] = useState<Boolean>(false);
+  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<String>(defaultValue);
   const optionRef = useRef<HTMLElement[]>([]);
   const selectPlaceholder = placeholder || "Choose an option";
@@ -61,15 +60,10 @@ const Select = ({
     }
   }, [open]);
 
-  const updateSelected = (option: String) => {
+  const updateSelected = (option: string) => {
     onChange(option);
     setSelected(option);
     setOpen(false);
-  };
-
-  const handleSelectInnerTest = (event: CustomMouseEvent) => {
-    const eventTarget = event.target as HTMLElement;
-    updateSelected(eventTarget.innerText);
   };
 
   const closeSelectBox = () => {
@@ -77,7 +71,7 @@ const Select = ({
   };
 
   const handleButton = () => {
-    setOpen((prev: Boolean) => !prev);
+    setOpen((prev: boolean) => !prev);
   };
 
   const handleKeyDown = (
@@ -123,7 +117,6 @@ const Select = ({
         setSelected,
         selectPlaceholder,
         updateSelected,
-        handleSelectInnerTest,
         handleButton,
         handleKeyDown,
         closeSelectBox,
@@ -140,7 +133,7 @@ const Trigger = () => {
     useContext(SelectContext) as SelectStatusContext;
   const optionListRef = useRef<HTMLButtonElement>(null);
 
-  const handleClickOutside = (event: any) => {
+  const handleClickOutside = (event: MouseEvent) => {
     const eventTarget = event.target as HTMLElement;
 
     if (optionListRef.current !== eventTarget) {
@@ -149,9 +142,9 @@ const Trigger = () => {
   };
 
   useEffect(() => {
-    window.addEventListener("click", handleClickOutside);
+    window.addEventListener("click", () => handleClickOutside);
     return () => {
-      window.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("click", () =>handleClickOutside);
     };
   }, []);
 
@@ -196,16 +189,21 @@ interface OptionProps {
 }
 
 const Option = ({ children, order }: OptionProps) => {
-  const { optionRef, handleKeyDown, handleSelectInnerTest } = useContext(
+  const { optionRef, handleKeyDown, updateSelected } = useContext(
     SelectContext
   ) as SelectStatusContext;
 
+  const handleClickOption = () => {
+    let optionValue = null
+    optionValue = children as string;
+    updateSelected(optionValue)
+  }
+
   return (
     <li
-      key={`${order}-option`}
       css={styleOption}
       ref={(el: HTMLLIElement) => (optionRef.current[order] = el)}
-      onClick={handleSelectInnerTest}
+      onClick={handleClickOption}
       onKeyDown={(event) => handleKeyDown(order, event)}
       tabIndex={0}
     >
