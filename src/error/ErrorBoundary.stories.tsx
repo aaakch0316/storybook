@@ -22,14 +22,22 @@ const Template: ComponentStory<typeof ErrorBoundary> = (args) => {
         fontFamily: "sans-serif",
       }}
     >
-      <ErrorBoundary>
-        <div onClick={handleErrorGeneration}>event handle ERROR</div>
-      </ErrorBoundary>
-      <ErrorBoundary>
+      <ErrorBoundary
+        renderFallback={({ error }) => <ErrorAlert error={error} />}
+        // renderFallback={({ error }) => <div>ttset{error}</div>}
+      >
+        {/* <div onClick={handleErrorGeneration}>event handle ERROR</div> */}
         <RenderTestComponent />
       </ErrorBoundary>
+      {/* <ErrorBoundary fallback={<>hi</>}>
+        <RenderTestComponent />
+      </ErrorBoundary> */}
     </div>
   );
+};
+
+const ErrorAlert = (error: any) => {
+  return <>error TESTAlert</>;
 };
 
 const RenderTestComponent = () => {
