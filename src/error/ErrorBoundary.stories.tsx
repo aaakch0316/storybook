@@ -23,15 +23,22 @@ const Template: ComponentStory<typeof ErrorBoundary> = (args) => {
       }}
     >
       <ErrorBoundary
-        renderFallback={ErrorAlert}
+        fallback={<div>뜨나 테스트</div>}
         // renderFallback={({ error }) => <div>ttset{error}</div>}
       >
+        <h3>div element fallback UI</h3>
         {/* <div onClick={handleErrorGeneration}>event handle ERROR</div> */}
         <RenderTestComponent />
       </ErrorBoundary>
-      {/* <ErrorBoundary fallback={<>hi</>}>
+
+      <ErrorBoundary
+        fallbackRender={ErrorAlert}
+        // renderFallback={({ error }) => <div>ttset{error}</div>}
+      >
+        <h3>Fallback UI return</h3>
+        {/* <div onClick={handleErrorGeneration}>event handle ERROR</div> */}
         <RenderTestComponent />
-      </ErrorBoundary> */}
+      </ErrorBoundary>
     </div>
   );
 };
@@ -43,6 +50,10 @@ const ErrorAlert = (props: any) => {
       <button onClick={props.resetErrorBoundary}>다시 시도</button>
       {/* error TESTAlert : {error.message} */}
     </>
+    // <div role="alert">
+    //   <p>Something went wrong:</p>
+    //   <pre style={{ color: "red" }}>{props.error.message}</pre>
+    // </div>
   );
 };
 

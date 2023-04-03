@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import React, {
   Component,
+  createElement,
   ErrorInfo,
   FunctionComponent,
   isValidElement,
@@ -10,19 +11,15 @@ import React, {
 
 import { ErrorBoundaryProps, FallbackProps } from "./types";
 
-// type ErrorBoundaryState = { error: Error | null; errorInfo: ErrorInfo | null };
-
 type ErrorBoundaryState = {
   didCatch: boolean;
-  error: any; // 왜지?
+  error: Error | null; // 왜지?
 };
 
 const initialState: ErrorBoundaryState = {
   didCatch: false,
   error: null,
 };
-
-// type ErrorBoundaryState = { error: Error | null; errorInfo: ErrorInfo | null };
 
 class ErrorBoundary extends React.Component<
   React.PropsWithRef<React.PropsWithChildren<ErrorBoundaryProps>>,
@@ -56,24 +53,26 @@ class ErrorBoundary extends React.Component<
   // }
 
   render() {
-    const {
-      children,
-      renderFallback,
-      // fallback
-    } = this.props;
+    const { children, fallbackRender, fallback, FallbackComponent } =
+      this.props;
     const { didCatch, error } = this.state;
     let childToRender = children;
 
-    if (didCatch) {
+    if (didCatch && error) {
       const props: FallbackProps = {
         error,
         resetErrorBoundary: this.resetErrorBoundary,
       };
-      // if (isValidElement(fallback)) {
-      // }
-      if (typeof renderFallback === "function") {
-        // 언제 많이 쓸까요?
-        childToRender = renderFallback(props);
+      if (isValidElement(fallback)) {
+        childToRender = fallback;
+      } else if (typeof fallbackRender === "function") {
+        childToRender = fallbackRender(props);
+      } else if (FallbackComponent) {
+        childToRender = createElement(FallbackComponent, props);
+      } else {
+        throw new Error(
+          "error-boundary requires either a fallback, fallbackRender, or FallbackComponent prop"
+        );
       }
     }
 
