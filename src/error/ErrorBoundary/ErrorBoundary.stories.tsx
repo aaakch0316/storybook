@@ -4,11 +4,6 @@ import ErrorBoundary from "./ErrorBoundary";
 
 export default {
   title: "Error/ErrorBoundary",
-  // id: string | undefined,
-  // includeStories: StoryDescriptor | undefined,
-  // excludeStories: StoryDescriptor | undefined,
-  // component?: ComponentType<...> | undefined,
-  // subcomponents?: Record<...> | undefined
 } as ComponentMeta<typeof ErrorBoundary>;
 
 const Template: ComponentStory<typeof ErrorBoundary> = (args) => {
