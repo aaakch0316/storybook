@@ -13,7 +13,7 @@ import { ErrorBoundaryProps, FallbackProps } from "./types";
 
 type ErrorBoundaryState = {
   didCatch: boolean;
-  error: Error | null; // 왜지?
+  error: Error | null;
 };
 
 const initialState: ErrorBoundaryState = {
