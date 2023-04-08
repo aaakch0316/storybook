@@ -15,8 +15,20 @@ export default {
 const Template: ComponentStory<typeof Input> = (args) => <Input {...args} />;
 
 export const Base = Template.bind({});
+export const Filled = Template.bind({});
+export const Unstyled = Template.bind({});
 Base.args = {
   label: "Basic usag",
   size: "md",
   variant: "outline",
+};
+Filled.args = {
+  label: "Basic usag",
+  size: "md",
+  variant: "filled",
+};
+Unstyled.args = {
+  label: "Basic usag",
+  size: "md",
+  variant: "unstyled",
 };
