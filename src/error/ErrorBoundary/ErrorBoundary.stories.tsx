@@ -45,10 +45,6 @@ const ErrorAlert = (props: any) => {
       <button onClick={props.resetErrorBoundary}>다시 시도</button>
       {/* error TESTAlert : {error.message} */}
     </>
-    // <div role="alert">
-    //   <p>Something went wrong:</p>
-    //   <pre style={{ color: "red" }}>{props.error.message}</pre>
-    // </div>
   );
 };
 
